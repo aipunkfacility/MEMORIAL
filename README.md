@@ -17,7 +17,7 @@
 2. **[Prompter Agent](.agents/skills/memorial-prompter/SKILL.md):**
    * Читает JSON-профиль и тип станка.
    * Собирает финальный промпт из атомарных блоков в `prompt_blocks/`.
-   * *Выход:* Готовый промпт для генерации в Midjourney/Flux.
+   * *Выход:* Готовый промпт для генерации в Nano Banana.
 
 3. **Generation Step (Manual):**
    * Оператор выполняет генерацию строго на синем хромакее (`#0000FF`).
