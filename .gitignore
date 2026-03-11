@@ -1,0 +1,16 @@
+# IDE
+.gemini/
+.agents/ctx/
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Project Data
+/projects/
+/orders/
+!/orders/active/
+!/orders/active/TEST_ORDER/
+!/orders/active/TEST_ORDER/**
+
+
