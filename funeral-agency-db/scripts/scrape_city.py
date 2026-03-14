@@ -153,15 +153,18 @@ def scrape_jsprav(city: str) -> list:
                 time.sleep(0.5)
             
             # JSprav structure: links to company pages
-            # First get list of companies
-            company_links = page.query_selector_all("a[href*='/ritualnyie-uslugi/']")
+            # Get all links that look like company links (contain company name)
+            company_links = page.query_selector_all("a[href*='/ritual']")
             
-            # Get unique company URLs
+            # Filter to get unique company URLs (not navigation)
             seen_urls = set()
             for link in company_links:  # No limit - collect all
                 try:
                     href = link.get_attribute("href")
                     if not href or href in seen_urls:
+                        continue
+                    # Skip if it's just a category page
+                    if href.endswith('/ritualnyie-uslugi/') or href.endswith('/ritualnyie-prinadlezhnosti/'):
                         continue
                     seen_urls.add(href)
                     
