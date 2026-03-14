@@ -50,6 +50,14 @@ def extract_phones(text: str) -> list:
     return list(set([normalize_phone(p) for p in phones if normalize_phone(p)]))
 
 
+def extract_email(text: str) -> str | None:
+    """Извлекает email из текста"""
+    if not text:
+        return None
+    emails = re.findall(r"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})", text, re.IGNORECASE)
+    return emails[0] if emails else None
+
+
 def scrape_2gis(city: str) -> list:
     """Парсит 2GIS через Playwright"""
     companies = []
@@ -150,7 +158,7 @@ def scrape_jsprav(city: str) -> list:
             
             # Get unique company URLs
             seen_urls = set()
-            for link in company_links[:50]:  # Limit to 50 for now
+            for link in company_links:  # No limit - collect all
                 try:
                     href = link.get_attribute("href")
                     if not href or href in seen_urls:
@@ -180,12 +188,17 @@ def scrape_jsprav(city: str) -> list:
                     site_elem = page.query_selector("a[href*='http']:not([href*='jsprav'])")
                     website = site_elem.get_attribute("href") if site_elem else ""
                     
+                    # Get email - extract from page content
+                    page_content = page.content()
+                    email = extract_email(page_content)
+                    
                     if name:
                         companies.append({
                             "name": name,
                             "phones": phones,
                             "address": address,
                             "website": website,
+                            "email": email,
                             "source": "jsprav"
                         })
                     
@@ -209,12 +222,17 @@ def merge_companies(companies: list) -> list:
     """
     Объединяет компании по телефону.
     Дубликаты не удаляются, а соединяются (дополняют друг друга).
+    Компании без телефона сохраняются по имени.
     """
     phone_map = {}
+    no_phone_map = {}  # Для компаний без телефона
     
     for company in companies:
         if not company.get("phones"):
-            # Без телефона - добавляем как есть
+            # Без телефона - сохраняем по имени
+            key = company.get("name", "").lower().strip()
+            if key and key not in no_phone_map:
+                no_phone_map[key] = company
             continue
         
         primary_phone = company["phones"][0]
@@ -237,11 +255,16 @@ def merge_companies(companies: list) -> list:
             if not existing.get("website") and company.get("website"):
                 existing["website"] = company["website"]
             
+            # Объединяем email
+            if not existing.get("email") and company.get("email"):
+                existing["email"] = company["email"]
+            
             # Добавляем источник
             sources = set(existing.get("source", "").split(",") + [company.get("source", "")])
             existing["source"] = ", ".join([s for s in sources if s])
     
-    return list(phone_map.values())
+    # Объединяем: с телефоном + без телефона
+    return list(phone_map.values()) + list(no_phone_map.values())
 
 
 def save_json(data: list, filepath: str):

@@ -81,12 +81,12 @@ cities:
   - name: "Волгоград"
     population: 1010000
     region: "Волгоградская область"
-    status: pending
+    status: completed
 
   - name: "Саратов"
     population: 887000
     region: "Саратовская область"
-    status: pending
+    status: completed
 
   - name: "Тюмень"
     population: 861000
@@ -221,7 +221,7 @@ cities:
   - name: "Астрахань"
     population: 468000
     region: "Астраханская область"
-    status: pending
+    status: completed
 
 ## Настройки
 
