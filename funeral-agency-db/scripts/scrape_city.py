@@ -128,6 +128,157 @@ def scrape_2gis(city: str) -> list:
     return companies
 
 
+def scrape_yell(city: str) -> list:
+    """Парсит Yell через Playwright"""
+    companies = []
+    
+    if not PLAYWRIGHT_AVAILABLE:
+        print("  Playwright not available for Yell")
+        return companies
+    
+    url = f"https://{city}.yell.ru/catalog/ritualnye_uslugi/"
+    print(f"  Scraping Yell: {url}")
+    
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(url, timeout=30000)
+            page.wait_for_load_state("networkidle", timeout=15000)
+            
+            # Scroll to load more
+            for _ in range(5):
+                page.evaluate("window.scrollBy(0, 1000)")
+                time.sleep(0.5)
+            
+            # Get company cards - Yell uses various selectors
+            cards = page.query_selector_all("div.company-card, div.listing-item, a[href*='/company/']")
+            
+            for card in cards:
+                try:
+                    # Get name
+                    name_elem = card.query_selector("h3 a, a.company-name, h2 a, span.company-name")
+                    if not name_elem:
+                        continue
+                    name = name_elem.inner_text().strip()
+                    if not name or len(name) < 3:
+                        continue
+                    
+                    # Get address
+                    addr_elem = card.query_selector("address, div.address, span.address")
+                    address = addr_elem.inner_text().strip() if addr_elem else ""
+                    
+                    # Get phone
+                    phone_elem = card.query_selector("span.phone, a.phone, div.phone")
+                    phone_text = phone_elem.inner_text() if phone_elem else ""
+                    phones = extract_phones(phone_text)
+                    
+                    # Get website
+                    site_elem = card.query_selector("a.website-link, a[href*='http']:not([href*='yell'])")
+                    website = site_elem.get_attribute("href") if site_elem else ""
+                    
+                    # Get email from page content if available
+                    page_content = card.inner_html()
+                    email = extract_email(page_content)
+                    
+                    if name:
+                        companies.append({
+                            "name": name,
+                            "phones": phones,
+                            "address": address,
+                            "website": website,
+                            "email": email,
+                            "source": "yell"
+                        })
+                except:
+                    continue
+            
+            browser.close()
+            
+    except Exception as e:
+        print(f"  Yell Playwright error: {e}")
+    
+    print(f"  Found: {len(companies)}")
+    return companies
+
+
+def scrape_firmsru(city: str) -> list:
+    """Парсит Firmsru через Playwright"""
+    companies = []
+    
+    if not PLAYWRIGHT_AVAILABLE:
+        print("  Playwright not available for Firmsru")
+        return companies
+    
+    # Firmsru URL format
+    url = f"https://firmsru.ru/{city}/ритуальные-услуги/"
+    print(f"  Scraping Firmsru: {url}")
+    
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(url, timeout=30000)
+            page.wait_for_load_state("networkidle", timeout=15000)
+            
+            # Scroll to load more
+            for _ in range(5):
+                page.evaluate("window.scrollBy(0, 1000)")
+                time.sleep(0.5)
+            
+            # Get company items - Firmsru uses various selectors
+            cards = page.query_selector_all("div.company, div.firm-item, a[href*='/firm/']")
+            
+            for card in cards:
+                try:
+                    # Get name
+                    name_elem = card.query_selector("h3 a, h2 a, a.name, span.name")
+                    if not name_elem:
+                        continue
+                    name = name_elem.inner_text().strip()
+                    if not name or len(name) < 3:
+                        continue
+                    
+                    # Get address
+                    addr_elem = card.query_selector("address, div.address, span.address")
+                    address = addr_elem.inner_text().strip() if addr_elem else ""
+                    
+                    # Get phone
+                    phone_elems = card.query_selector_all("span.phone, div.phone, a[href^='tel:']")
+                    phones = []
+                    for p in phone_elems:
+                        phone_text = p.inner_text()
+                        phones.extend(extract_phones(phone_text))
+                    
+                    # Get website
+                    site_elem = card.query_selector("a[href*='http']:not([href*='firmsru'])")
+                    website = site_elem.get_attribute("href") if site_elem else ""
+                    
+                    # Get email from card content
+                    page_content = card.inner_html()
+                    email = extract_email(page_content)
+                    
+                    if name:
+                        companies.append({
+                            "name": name,
+                            "phones": phones,
+                            "address": address,
+                            "website": website,
+                            "email": email,
+                            "source": "firmsru"
+                        })
+                except:
+                    continue
+            
+            browser.close()
+            
+    except Exception as e:
+        print(f"  Firmsru Playwright error: {e}")
+    
+    print(f"  Found: {len(companies)}")
+    return companies
+
+
 def scrape_jsprav(city: str) -> list:
     """Парсит JSprav через Playwright"""
     companies = []
@@ -309,7 +460,8 @@ def save_markdown(companies: list, filepath: str):
             website = company.get("website", "")
             f.write(f"**Сайт:** {website if website else 'не указан'}\n")
             
-            f.write(f"**Email:** не указан\n")
+            email = company.get("email", "")
+            f.write(f"**Email:** {email if email else 'не указан'}\n")
             f.write(f"**Telegram:** не найден\n")
             f.write(f"**WhatsApp:** не указан\n")
             
@@ -343,6 +495,16 @@ def scrape_city(city: str):
     # JSprav  
     print("Scraping JSprav...")
     companies = scrape_jsprav(city)
+    all_companies.extend(companies)
+    
+    # Yell
+    print("Scraping Yell...")
+    companies = scrape_yell(city)
+    all_companies.extend(companies)
+    
+    # Firmsru
+    print("Scraping Firmsru...")
+    companies = scrape_firmsru(city)
     all_companies.extend(companies)
     
     print(f"\nTotal before merge: {len(all_companies)}")
