@@ -1,5 +1,4 @@
-# Civilian Clothing Block
+# Гражданская одежда (Civilian)
 
-1. **Clothing (Civilian Re-Generation):**
-   * **Uniform:** Completely re-draw a new high-definition civilian clothing (suit, dress, shirt based on input). The texture must be gritty and high-contrast.
-   * **Texture:** Simulate realistic fabric material. Visible heavy weave and crisp details. While the face is smooth, the clothing MUST be hyper-sharp.
+1. **Civilian Clothing Architecture:**
+   Professionally replace the original outfit with formal civilian attire suitable for a memorial portrait. The new clothing—whether a refined blazer, suit jacket, or a respectful formal dress—must fit perfectly, maintaining the dignity and proportions of the subject. Focus on the sharp lines of lapels, collars, and defined buttons for a polished, high-end look.

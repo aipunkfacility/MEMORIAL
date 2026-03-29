@@ -1,13 +1,9 @@
-# Impact Engraving Block
+# Ударная гравировка (Impact Style)
 
-1. **Format & Lighting:** Output strictly in Black and White. Use **Hard Volumetric Lighting** (Rembrandt or Butterfly).
-   * **CRITICAL:** The forehead, nose bridge, and cheeks MUST be **bright white (high key)** to pop out on black stone.
-   * Maximize local contrast. Deep shadows under the chin and nose are required for 3D volume. Avoid flat gray mid-tones.
+1. **Materiality & Micro-Contrast:**
+   To provide a high-quality physical raster for a diamond needle, render the subject with **Phase One medium format** precision and **f/11 depth of field**. Mandatory: the skin must exhibit visible micro-contrast and realistic pores. Do not over-smooth; the texture is essential for the needle to create a vibrant, durable image on the stone.
 
-2. **Face & Skin:** The skin must have **high micro-contrast**. Visible pores and skin texture are required for the CNC needle to grip. DO NOT smooth the skin into plastic. Eyes and lips must be razor-sharp.
+2. **Contrast & Edge Definition:**
+   The clothing and facial structure should be rendered with macro-sharpness, ensuring every button and fabric weave is textured and clear. Utilize a bright **Inner Glow (10-25px)** around the subject's edges to ensure strong separation from the background, maximizing the readability of the physical engraving.
 
-3. **Technical Constraints (Impact Etching):**
-   * Optimize for **Granite Impact Etching** (Sauno/Mirtels style).
-   * **Style:** The image must simulate a **"High Pass" filter effect**. Edges and details must be over-sharpened.
-   * **Post-Processing:** Whites must be boosted (Dodge), Blacks must be crushed (Burn).
-   * **Texture:** Visible micro-contrast and grain are required for the needle to grip. Do not smooth the skin into plastic.
+**Goal (Impact Optimization):** Create a high-contrast memorial portrait optimized for diamond needle engraving. Ensure skin micro-texture (brightness 220-235) and vibrant catchlights in the eyes to prevent a "plastic" look on the stone surface.

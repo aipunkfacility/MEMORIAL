@@ -1,6 +1,4 @@
-# Military Clothing Block
+# Военная форма (Military)
 
-1. **Clothing (Military Re-Generation):**
-   * **Uniform:** Completely re-draw/generate a new **high-definition military tactical jacket**. The camouflage pattern must be extremely sharp and distinct (High Pass effect).
-   * **Texture:** The fabric must look crisp, new, and stiff (tactical material). Zippers, seams, and velcro must be hyper-realistic.
-   * **Medal:** **REMOVE the medal.** The chest area should only have the tactical jacket details.
+1. **Military Service Architecture:**
+   Replace the original clothing with a formal military service uniform. The new uniform must look sharp and official, with proper proportions for the shoulder boards (epaulettes) and collar insignia. Maintain the dignity of the military rank while ensuring the lines are clean and respectful. (Note: Exclude complex medals or tiny pins to ensure high-quality engraving across all machine types).

@@ -19,7 +19,16 @@ MEMORIAL/
 ├── .agents/skills/           # ИИ-агенты (Antigravity Skills)
 │   ├── memorial-analyzer/    # Агент анализа фото
 │   ├── memorial-prompter/    # Агент создания промптов
+│   │   └── prompt_blocks/    # Промпт-блоки для сборки
+│   │       ├── base.md
+│   │       ├── laser.md
+│   │       ├── impact.md
+│   │       ├── clothing/
+│   │       └── headgear/
 │   └── memorial-postprocessing/ # Чек-лист постобработки
+├── guides/                    # Руководства
+│   ├── cli-anything-gimp.md  # Воркфлоу постобработки
+│   └── nano_banana_guide.md  # Генерация изображений
 ├── knowledge/                # База знаний
 │   ├── machines/             # Специфика станков
 │   │   ├── laser.md         # Лазерные станки
@@ -29,19 +38,10 @@ MEMORIAL/
 │   ├── schema.json           # JSON-схема заказа
 │   ├── template/             # Шаблон нового заказа
 │   └── active/               # Активные заказы
-├── funeral-agency-db/        # База ритуальных агентств
-│   ├── config.yaml           # Список городов (44 города)
-│   ├── agents/
-│   │   └── funeral-scraper.md # Агент сбора базы
-│   ├── cities/
-│   │   └── {city-name}/     # Данные по городам
-│   │       ├── data.md      # Собранные данные
-│   │       ├── summary.md   # Саммари
-│   │       └── report.md    # Отчет с рекомендациями
-│   └── sources/
-│       └── directories.md   # Источники
-├── projects/                 # Примеры работ (в gitignore)
-└── workflow.md               # Навигатор по системе
+├── prepare_vignette.py       # Скрипт виньетирования
+├── memorial_process.scm      # GIMP Script-Fu (запасной)
+├── run_gimp.bat              # Запуск GIMP скрипта
+└── projects/                 # Примеры работ (в gitignore)
 ```
 
 ## Команды
@@ -157,8 +157,8 @@ markdownlint orders/
 **Структура промпта (порядок блоков):**
 
 1. **base.md** — базовые требования (синий хромакей, разрешение)
-2. **clothing/** — одежда (military, civilian)
-3. **headgear/** — головной убор (none, cap)
+2. **clothing/** — одежда (military, civilian, preserve)
+3. **headgear/** — головной убор (none, cap, preserve)
 4. **machine/** — тип станка (laser.md или impact.md)
 
 **Важно:** Промпт должен содержать:
@@ -166,11 +166,29 @@ markdownlint orders/
 - Высокое разрешение: `8k, high resolution`
 - Стиль гравировки: `engraving style, stone carving`
 
+**Расположение блоков:** `.agents/skills/memorial-prompter/prompt_blocks/`
+
 ### memorial-postprocessing
 
 **Назначение:** Чек-лист для технической подготовки файла в Photoshop.
 
 **Применение:** После генерации изображения оператором.
+
+### Постобработка изображения
+
+Полный воркфлоу подготовки файла для гравировки:
+
+1. **cli-anything-gimp** — преобразование в ЧБ, резкость, контраст
+2. **prepare_vignette.py** — удаление хромакея, виньетирование, финальная обработция
+
+**См. подробнее:** `guides/cli-anything-gimp.md`
+
+**Обязательная проверка после обработки:**
+- [ ] Фон чёрный (#000000), без градиента
+- [ ] Лицо не пересвечено
+- [ ] Детали волос сохранены
+- [ ] Воротник чёткий
+- [ ] Края плавные
 
 ### funeral-scraper
 
@@ -227,7 +245,10 @@ orders/active/ORD-2026-001/
 ├── order.json      # Данные заказа
 ├── source.jpg      # Исходное фото
 ├── prompt.md       # Чистый промпт для копирования
-└── generated/      # Сгенерированные изображения
+└── generated/     # Сгенерированные изображения
+    ├── ai.png          # Нейро-ретушь (синий фон)
+    ├── final.tiff      # После cli-anything-gimp
+    └── final_vignette.tiff  # Готовый файл (черный фон)
 ```
 
 ### Папки городов (funeral-agency-db)
@@ -263,7 +284,7 @@ funeral-agency-db/cities/saratov/
 1. Создать тестовый заказ в `orders/active/TEST_ORDER/`
 2. Запустить полный цикл: analyzer → prompter
 3. Проверить итоговый промпт вручную в Nano Banana
-4. При необходимости — корректировать блоки в `prompt_blocks/`
+4. При необходимости — корректировать блоки в `.agents/skills/memorial-prompter/prompt_blocks/`
 
 ## Рекомендации по работе
 
@@ -277,7 +298,7 @@ funeral-agency-db/cities/saratov/
 ### Работа с промптами
 
 1. Сначала определить тип станка (laser/impact)
-2. Выбрать соответствующий блок из `prompt_blocks/`
+2. Выбрать соответствующий блок из `.agents/skills/memorial-prompter/prompt_blocks/`
 3. Проверить наличие всех необходимых модификаторов
 4. Добавить `engraving-ready` если станок ударный
 
@@ -296,4 +317,4 @@ funeral-agency-db/cities/saratov/
 
 ---
 
-Обновлено: 2026-03-14
+Обновлено: 2026-03-29

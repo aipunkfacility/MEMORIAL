@@ -1,5 +1,4 @@
-# Cap Headgear Block
+# Добавление кепки (Cap)
 
-1. **Headgear (Cap/Hat):**
-   * **Cap:** Re-draw the cap to be sharp and detailed. Visible texture of the fabric.
-   * **Shadow Management:** Soften the sharp shadow cast by the cap on the forehead. The forehead must be visible and well-lit.
+1. **Service Cap Architecture:**
+   Add a formal, well-fitted cap to the subject's head. The cap should be rendered with clear structure and material realism—whether it's cloth textures or leather visors. Ensure it fits naturally on the subject's head and occupies a logical volume in the 3D space, contributing to the overall professional aesthetic of the memorial portrait.
